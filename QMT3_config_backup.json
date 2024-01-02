@@ -1,0 +1,557 @@
+[
+  {
+    "cluster_name": "QMT3"
+  },
+  {
+    "tenant_info": [
+      {
+        "id": 1,
+        "name": "Default",
+        "web_ui_enabled": true,
+        "rest_api_enabled": true,
+        "ssh_enabled": true,
+        "replication_enabled": false,
+        "nfs_enabled": true,
+        "smb_enabled": true,
+        "networks": [
+          1
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VLAN122",
+        "web_ui_enabled": false,
+        "rest_api_enabled": false,
+        "ssh_enabled": false,
+        "replication_enabled": false,
+        "nfs_enabled": true,
+        "smb_enabled": true,
+        "networks": [
+          2
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Replication120",
+        "web_ui_enabled": false,
+        "rest_api_enabled": false,
+        "ssh_enabled": false,
+        "replication_enabled": true,
+        "nfs_enabled": true,
+        "smb_enabled": false,
+        "networks": [
+          3
+        ]
+      },
+      {
+        "id": 4,
+        "name": "121-2nd",
+        "web_ui_enabled": false,
+        "rest_api_enabled": false,
+        "ssh_enabled": false,
+        "replication_enabled": false,
+        "nfs_enabled": false,
+        "smb_enabled": true,
+        "networks": []
+      }
+    ]
+  },
+  {
+    "smb_shares": [
+      {
+        "id": "2",
+        "share_name": "Files",
+        "tenant_id": 1,
+        "fs_path": "/",
+        "description": "",
+        "permissions": [
+          {
+            "type": "DENIED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "501",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-501",
+              "name": "guest"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "500",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-500",
+              "name": "admin"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "WORLD",
+              "auth_id": "8589934592",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-1-0",
+              "name": "Everyone"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "network_permissions": [
+          {
+            "type": "ALLOWED",
+            "address_ranges": [],
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "access_based_enumeration_enabled": false,
+        "default_file_create_mode": "0644",
+        "default_directory_create_mode": "0755",
+        "require_encryption": false
+      },
+      {
+        "id": "3",
+        "share_name": "SMB122",
+        "tenant_id": 2,
+        "fs_path": "/SMB122",
+        "description": "",
+        "permissions": [
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "500",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-500",
+              "name": "admin"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "WORLD",
+              "auth_id": "8589934592",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-1-0",
+              "name": "Everyone"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "network_permissions": [
+          {
+            "type": "ALLOWED",
+            "address_ranges": [],
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "access_based_enumeration_enabled": false,
+        "default_file_create_mode": "0644",
+        "default_directory_create_mode": "0755",
+        "require_encryption": false
+      },
+      {
+        "id": "4",
+        "share_name": "SMB121",
+        "tenant_id": 1,
+        "fs_path": "/SMB121",
+        "description": "",
+        "permissions": [
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "500",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-500",
+              "name": "admin"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "WORLD",
+              "auth_id": "8589934592",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-1-0",
+              "name": "Everyone"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "network_permissions": [
+          {
+            "type": "ALLOWED",
+            "address_ranges": [],
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "access_based_enumeration_enabled": false,
+        "default_file_create_mode": "0644",
+        "default_directory_create_mode": "0755",
+        "require_encryption": false
+      },
+      {
+        "id": "5",
+        "share_name": "Data",
+        "tenant_id": 1,
+        "fs_path": "/DATA1",
+        "description": "",
+        "permissions": [
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "500",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-500",
+              "name": "admin"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "WORLD",
+              "auth_id": "8589934592",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-1-0",
+              "name": "Everyone"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "ACTIVE_DIRECTORY",
+              "auth_id": "38654706772",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-2117991060-1852966423-4041955559-1108",
+              "name": "SIMPSONS\\homer"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "network_permissions": [
+          {
+            "type": "ALLOWED",
+            "address_ranges": [],
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "access_based_enumeration_enabled": false,
+        "default_file_create_mode": "0644",
+        "default_directory_create_mode": "0755",
+        "require_encryption": false
+      },
+      {
+        "id": "6",
+        "share_name": "Data",
+        "tenant_id": 2,
+        "fs_path": "/DATA122",
+        "description": "",
+        "permissions": [
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "500",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-500",
+              "name": "admin"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "WORLD",
+              "auth_id": "8589934592",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-1-0",
+              "name": "Everyone"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "network_permissions": [
+          {
+            "type": "ALLOWED",
+            "address_ranges": [],
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "access_based_enumeration_enabled": false,
+        "default_file_create_mode": "0644",
+        "default_directory_create_mode": "0755",
+        "require_encryption": false
+      },
+      {
+        "id": "7",
+        "share_name": "VeeamRoot",
+        "tenant_id": 2,
+        "fs_path": "/",
+        "description": "",
+        "permissions": [
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "500",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-500",
+              "name": "admin"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "ACTIVE_DIRECTORY",
+              "auth_id": "21474837589",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-930766870-2893278268-1417210345-1109",
+              "name": "QUMULOTEST\\batman"
+            },
+            "rights": [
+              "READ"
+            ]
+          }
+        ],
+        "network_permissions": [
+          {
+            "type": "ALLOWED",
+            "address_ranges": [],
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "access_based_enumeration_enabled": false,
+        "default_file_create_mode": "0644",
+        "default_directory_create_mode": "0755",
+        "require_encryption": false
+      },
+      {
+        "id": "8",
+        "share_name": "newtenant",
+        "tenant_id": 4,
+        "fs_path": "/newtenant",
+        "description": "",
+        "permissions": [
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "LOCAL",
+              "auth_id": "500",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-5-21-3270779257-1967782235-1971601871-500",
+              "name": "admin"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          },
+          {
+            "type": "ALLOWED",
+            "trustee": {
+              "domain": "WORLD",
+              "auth_id": "8589934592",
+              "uid": null,
+              "gid": null,
+              "sid": "S-1-1-0",
+              "name": "Everyone"
+            },
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "network_permissions": [
+          {
+            "type": "ALLOWED",
+            "address_ranges": [],
+            "rights": [
+              "READ",
+              "WRITE",
+              "CHANGE_PERMISSIONS"
+            ]
+          }
+        ],
+        "access_based_enumeration_enabled": false,
+        "default_file_create_mode": "0644",
+        "default_directory_create_mode": "0755",
+        "require_encryption": false
+      }
+    ]
+  },
+  {
+    "nfs_exports": [
+      {
+        "id": "1",
+        "export_path": "/",
+        "tenant_id": 1,
+        "fs_path": "/",
+        "description": "",
+        "restrictions": [
+          {
+            "host_restrictions": [],
+            "read_only": false,
+            "require_privileged_port": false,
+            "user_mapping": "NFS_MAP_NONE"
+          }
+        ],
+        "fields_to_present_as_32_bit": []
+      },
+      {
+        "id": "2",
+        "export_path": "/NFS122",
+        "tenant_id": 2,
+        "fs_path": "/NFS",
+        "description": "",
+        "restrictions": [
+          {
+            "host_restrictions": [],
+            "read_only": false,
+            "require_privileged_port": false,
+            "user_mapping": "NFS_MAP_NONE"
+          }
+        ],
+        "fields_to_present_as_32_bit": []
+      },
+      {
+        "id": "3",
+        "export_path": "/NFS121",
+        "tenant_id": 1,
+        "fs_path": "/NFS2",
+        "description": "",
+        "restrictions": [
+          {
+            "host_restrictions": [],
+            "read_only": false,
+            "require_privileged_port": false,
+            "user_mapping": "NFS_MAP_NONE"
+          }
+        ],
+        "fields_to_present_as_32_bit": []
+      }
+    ]
+  },
+  {
+    "s3_config": {
+      "enabled": false,
+      "base_path": "/",
+      "multipart_upload_expiry_interval": "1days",
+      "secure": true
+    }
+  },
+  {
+    "ftp_config": {
+      "enabled": false,
+      "check_remote_host": true,
+      "log_operations": true,
+      "chroot_users": false,
+      "allow_unencrypted_connections": true,
+      "expand_wildcards": false,
+      "anonymous_user": null,
+      "greeting": "\n               ,-,/__\n               \\__A,_\"\n               ___U_\n           \\\\-`    //,\n          ,`\\\\     // '.\n          :Q ,    , `,  \\,\n         / `-\"    , Q:   Y\n         I      _  `\"    I,\n         |    ,` `,   |   |\n         |    :   :   |   |\n         |    :   :   |   I\n         |    `        <  /\n         I               7\n         |\\              /\n          <',          ,'\n             \"-,____,-\"\n              |    |\n             =\"   =\"\n _____                       _\n|  _  |                     | |\n| | | |_   _ _ __ ___  _   _| | ___\n| | | | | | | '_ ` _ \\| | | | |/ _ \\\n\\ \\/' | |_| | | | | | | |_| | | (_) |\n \\_/\\_\\\\__,_|_| |_| |_|\\__,_|_|\\___/\n\n\n        ______ ___________\n        |  ___|_   _| ___ \\\n        | |_    | | | |_/ /\n        |  _|   | | |  __/\n        | |     | | | |\n        \\_|     \\_/ \\_|\n\nQumulo FTP server ready."
+    }
+  }
+]

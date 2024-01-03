@@ -44,13 +44,10 @@ url = f"https://{cluster_address}/api/v0/ftp/settings"
 ftp_config = requests.get(url, headers=headers, verify=False).json()
 
 # Save working config to file "cluster_name_config_backup.json"
-config_json = [cluster_name, { "tenant_info":tenants['entries'] }, { "smb_shares": smb_shares['entries'] }, { "nfs_exports": nfs_exports['entries'] }, { "s3_config": s3_config }, { "ftp_config": ftp_config }]
+config_json = [cluster_name, { "tenants":tenants['entries'] }, { "smb_shares": smb_shares['entries'] }, { "nfs_exports": nfs_exports['entries'] }, { "s3_config": s3_config }, { "ftp_config": ftp_config }]
 file_location = config_save_file_location + cluster_name["cluster_name"] + "_config_backup.json"
 with open(file_location, 'w') as json_file:
     json.dump(config_json, json_file, indent=2)
-
-# The plan is to use SMB Share permissions to set all to Read Only without having to muck around with SMB share permissions
-# This will still require that all services are bumped for changes to be enforced
 
 # This is the GP API calling function
 def api_caller(url, api_json, method):
@@ -131,4 +128,30 @@ else:
     print("FTP Service already disabled")
 
 # Bring all tenants who previously had SMB and NFS services back online:
-
+for key in tenants['entries']:
+    if key.get('nfs_enabled') and key.get('smb_enabled'):
+        method = f"Re-enabling SMB and NFS on tenant {key.get('name')}:"
+        restrict_json = {
+        "nfs_enabled": True,
+        "smb_enabled": True
+        }
+        url = f"https://{cluster_address}/api/v1/multitenancy/tenants/{key.get('id')}"
+        api_caller(url,restrict_json, method)
+    elif not key.get('nfs_enabled') and key.get('smb_enabled'):
+        method = f"Re-enabling SMB on tenant {key.get('name')}:"
+        restrict_json = {
+        "nfs_enabled": False,
+        "smb_enabled": True
+        }
+        url = f"https://{cluster_address}/api/v1/multitenancy/tenants/{key.get('id')}"
+        api_caller(url,restrict_json, method)
+    elif not key.get('smb_enabled') and key.get('nfs_enabled'):
+        method = f"Re-enabling NFS on tenant {key.get('name')}:"
+        restrict_json = {
+        "nfs_enabled": True,
+        "smb_enabled": False
+        }
+        url = f"https://{cluster_address}/api/v1/multitenancy/tenants/{key.get('id')}"
+        api_caller(url,restrict_json, method)
+    else:
+        print(f"Skipping tenant {key.get('name')} - Tenant did not have NFS or SMB enabled originally")

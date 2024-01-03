@@ -1,41 +1,41 @@
 import asyncio
 import aiohttp
 import json
-from all_stop import token, cluster_address, config_save_file_location, headers
+from all_stop import TOKEN, CLUSTER_ADDRESS, CONFIG_SAVE_FILE_LOCATION, HEADERS
 
 async def aiohttp_get(url, session):
-    async with session.get(url, headers=headers, ssl=False) as response:
+    async with session.get(url, headers=HEADERS, ssl=False) as response:
         return await response.json()
 
 async def collect_and_stop():
     async with aiohttp.ClientSession() as session:
         # Get Cluster Name
-        url = f"https://{cluster_address}/api/v1/cluster/settings"
+        url = f"https://{CLUSTER_ADDRESS}/api/v1/cluster/settings"
         cluster_name = await aiohttp_get(url, session)
 
         # Get MT config
-        url = f"https://{cluster_address}/api/v1/multitenancy/tenants/"
+        url = f"https://{CLUSTER_ADDRESS}/api/v1/multitenancy/tenants/"
         tenants = await aiohttp_get(url, session)
 
         # Get SMB Share config:
-        url = f"https://{cluster_address}/api/v3/smb/shares/?populate-trustee-names=true"
+        url = f"https://{CLUSTER_ADDRESS}/api/v3/smb/shares/?populate-trustee-names=true"
         smb_shares = await aiohttp_get(url, session)
 
         # Get NFS exports:
-        url = f"https://{cluster_address}/api/v3/nfs/exports/"
+        url = f"https://{CLUSTER_ADDRESS}/api/v3/nfs/exports/"
         nfs_exports = await aiohttp_get(url, session)
 
         # Get S3 Config:
-        url = f"https://{cluster_address}/api/v1/s3/settings"
+        url = f"https://{CLUSTER_ADDRESS}/api/v1/s3/settings"
         s3_config = await aiohttp_get(url, session)
 
         # Get FTP Config:
-        url = f"https://{cluster_address}/api/v0/ftp/settings"
+        url = f"https://{CLUSTER_ADDRESS}/api/v0/ftp/settings"
         ftp_config = await aiohttp_get(url, session)
 
     # Save working config to file "cluster_name_config_backup.json"
     config_json = [cluster_name, { "tenants":tenants['entries'] }, { "smb_shares": smb_shares['entries'] }, { "nfs_exports": nfs_exports['entries'] }, { "s3_config": s3_config }, { "ftp_config": ftp_config }]
-    file_location = config_save_file_location + cluster_name["cluster_name"] + "_config_backup23.json"
+    file_location = CONFIG_SAVE_FILE_LOCATION + cluster_name["cluster_name"] + "_config_backup23.json"
     with open(file_location, 'w') as json_file:
         json.dump(config_json, json_file, indent=2)
     
@@ -72,7 +72,7 @@ async def collect_and_stop():
 
 # Async General Purpose API patch function
 async def aiohttp_patch(url, api_json, session, method):
-    async with session.patch(url, json=api_json, headers=headers, ssl=False) as response:
+    async with session.patch(url, json=api_json, headers=HEADERS, ssl=False) as response:
         if response.status == 200:
             print(f'{method} request successful')
         else:
@@ -87,7 +87,7 @@ async def stop_smb_nfs_per_tenant(key, session):
         "nfs_enabled": False,
         "smb_enabled": False
     }
-    url = f"https://{cluster_address}/api/v1/multitenancy/tenants/{key.get('id')}"
+    url = f"https://{CLUSTER_ADDRESS}/api/v1/multitenancy/tenants/{key.get('id')}"
     await aiohttp_patch(url, restrict_json, session, method)
 
 # Async Function to set NFS exports to Read-Only
@@ -98,7 +98,7 @@ async def set_nfs_to_read_only(key, session):
         { "host_restrictions": [],
         "read_only": True,
         "user_mapping": "NFS_MAP_NONE" } ] }
-    url = f"https://{cluster_address}/api/v3/nfs/exports/{key.get('id')}"
+    url = f"https://{CLUSTER_ADDRESS}/api/v3/nfs/exports/{key.get('id')}"
     await aiohttp_patch(url, restrict_json, session, method)
 
 # Async Function to set SMB Shares to Read-Only
@@ -108,7 +108,7 @@ async def set_smb_to_read_only(key, session):
         { "type": "ALLOWED",
         "address_ranges": [],
         "rights": [ "READ" ] }]}
-    url = f"https://{cluster_address}/api/v3/smb/shares/{key.get('id')}"
+    url = f"https://{CLUSTER_ADDRESS}/api/v3/smb/shares/{key.get('id')}"
     await aiohttp_patch(url, restrict_json, session, method)
 
 
@@ -118,7 +118,7 @@ async def stop_s3_service(session):
     restrict_json = {
     "enabled": False
     }
-    url = f"https://{cluster_address}/api/v1/s3/settings"
+    url = f"https://{CLUSTER_ADDRESS}/api/v1/s3/settings"
     await aiohttp_patch(url, restrict_json, session, method)
 
 # Async Function to disable FTP service
@@ -127,7 +127,7 @@ async def stop_ftp_service(session):
     restrict_json = {
     "enabled": False
     }
-    url = f"https://{cluster_address}/api/v0/ftp/settings"
+    url = f"https://{CLUSTER_ADDRESS}/api/v0/ftp/settings"
     await aiohttp_patch(url, restrict_json, session, method)
 
 # Function to re-enable tenant's SMB and NFS service
@@ -137,7 +137,7 @@ async def start_smb_nfs_per_tenant(key, session):
     if services:
         services = (' and '.join(services))
         method = f"Re-enabling {services} on tenant {key.get('name')}"
-        url = f"https://{cluster_address}/api/v1/multitenancy/tenants/{key.get('id')}"
+        url = f"https://{CLUSTER_ADDRESS}/api/v1/multitenancy/tenants/{key.get('id')}"
         restrict_json = key
         await aiohttp_patch(url, restrict_json, session, method)
     else:

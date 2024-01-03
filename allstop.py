@@ -49,6 +49,86 @@ file_location = config_save_file_location + cluster_name["cluster_name"] + "_con
 with open(file_location, 'w') as json_file:
     json.dump(config_json, json_file, indent=2)
 
-# The plan is to use SMB Share permissions to set all to Read Only without having tomuck around with SMB share permissions
+# The plan is to use SMB Share permissions to set all to Read Only without having to muck around with SMB share permissions
 # This will still require that all services are bumped for changes to be enforced
+
+# This is the GP API calling function
+def api_caller(url, api_json, method):
+    response = requests.patch(url, json=api_json, headers=headers, verify=False)
+    if response.status_code == 200:
+        print(f'{method} request successful')
+    else:
+        print(f'{method} request error: {response.status_code}')
+        print(response.text)  # Print the error message or response content
+    return
+
+
+# Stop SMB and NFS services on all Tenants
+for key in tenants['entries']:
+    method = f"Disabling tenant {key.get('name')}:"
+    restrict_json = {
+    "nfs_enabled": False,
+    "smb_enabled": False
+    }
+    url = f"https://{cluster_address}/api/v1/multitenancy/tenants/{key.get('id')}"
+    api_caller(url,restrict_json, method)
+
+# Set all SMB Shares to Read-Only via Network Restrictions
+restrict_json = {
+  "network_permissions": [
+    {
+      "type": "ALLOWED",
+      "address_ranges": [
+      ],
+      "rights": [
+        "READ"
+      ]
+    }
+  ]
+}
+for key in smb_shares['entries']:
+    method = f"SMB Share {key.get('share_name')} to Read-Only:"
+    url = f"https://{cluster_address}/api/v3/smb/shares/{key.get('id')}"
+    api_caller(url,restrict_json, method)
+
+# Set all NFS exports to Read-Only:
+restrict_json = {
+  "restrictions": [
+    {
+      "host_restrictions": [
+      ],
+      "read_only": True,
+      "user_mapping": "NFS_MAP_NONE"
+   }
+  ]
+}
+for key in nfs_exports['entries']:
+    method = f"NFS export on path {key.get('export_path')} to Read-Only:"
+    url = f"https://{cluster_address}/api/v3/nfs/exports/{key.get('id')}"
+    api_caller(url,restrict_json, method)
+
+
+# Disable S3 Service if needed
+if s3_config.get('enabled'):
+    restrict_json = {
+  "enabled": False
+}
+    url = f"https://{cluster_address}/api/v1/s3/settings"
+    method = f"Disable S3 Service:"
+    api_caller(url,restrict_json, method)
+else:
+    print("S3 service already disabled")
+
+# Disable FTP Service if needed:
+method = "Disable FTP Service:"
+if ftp_config['enabled']:
+    restrict_json = {
+    "enabled": True
+    }
+    url = f"https://{cluster_address}/api/v0/ftp/settings"
+    api_caller(url,restrict_json, method)
+else:
+    print("FTP Service already disabled")
+
+# Bring all tenants who previously had SMB and NFS services back online:
 

@@ -154,4 +154,4 @@ for key in tenants['entries']:
         url = f"https://{cluster_address}/api/v1/multitenancy/tenants/{key.get('id')}"
         api_caller(url,restrict_json, method)
     else:
-        print(f"Skipping tenant {key.get('name')} - Tenant did not have NFS or SMB enabled originally")
+        print(f"Skipping tenant {key.get('name')} - This tenant did not have NFS or SMB enabled originally")

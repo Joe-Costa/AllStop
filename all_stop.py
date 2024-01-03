@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 import argparse
 import urllib3
-import set_read_only
+import configparser
+import set_read_only as set_read_only
+import resume_cluster as resume_cluster
+
+# Load the config file
+config = configparser.ConfigParser()
+config.read('all_stop.conf')
+CLUSTER_ADDRESS = config['CLUSTER']['CLUSTER_ADDRESS']
+TOKEN = config['CLUSTER']['TOKEN']
+CONFIG_SAVE_FILE_LOCATION = config['CLUSTER']['CONFIG_SAVE_FILE_LOCATION']
 
 # Disable "Insecure HTTP" errors if certs are not available
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# Perm token for QMT3
-TOKEN = "access-v1:KK0ofAYQCjZWKjpPjob/Fewwcc6GopsOhDBCw5kq5mEBAAAA9AEAAAAAAABiTQn7aUwFZl99lGUAAAAAsYXNOg=="
-CLUSTER_ADDRESS = "qmt3.qumulotest.local"
-CONFIG_SAVE_FILE_LOCATION = "/Users/joe/Python_Projects/AllStop/"
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -25,7 +29,8 @@ def main():
     args = parser.parse_args()
 
     if args.stop:  
-        all_stop_4gpt
+        set_read_only
+        asyncio.run(collect_and_stop())
         # Add any additional logic related to the Stop class here
 
     elif args.resume:

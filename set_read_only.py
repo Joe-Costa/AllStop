@@ -1,7 +1,24 @@
 import asyncio
 import aiohttp
 import json
-from all_stop import TOKEN, CLUSTER_ADDRESS, CONFIG_SAVE_FILE_LOCATION, HEADERS
+import configparser
+import urllib3
+
+# Disable "Insecure HTTP" errors if certs are not available
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Load the config file
+config = configparser.ConfigParser()
+config.read('all_stop.conf')
+CLUSTER_ADDRESS = config['CLUSTER']['CLUSTER_ADDRESS']
+TOKEN = config['CLUSTER']['TOKEN']
+CONFIG_SAVE_FILE_LOCATION = config['CLUSTER']['CONFIG_SAVE_FILE_LOCATION']
+
+HEADERS = {
+    "Authorization": f"Bearer {TOKEN}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
 
 async def aiohttp_get(url, session):
     async with session.get(url, headers=HEADERS, ssl=False) as response:
@@ -143,4 +160,4 @@ async def start_smb_nfs_per_tenant(key, session):
     else:
         print(f"Skipping tenant {key.get('name')}, tenant did not have SMB or NFS services enabled")
 
-asyncio.run(collect_and_stop())
+# asyncio.run(collect_and_stop())

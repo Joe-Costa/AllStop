@@ -1,33 +1,26 @@
-All Stop Cluster script
+# All-Stop script - Place a Qumulo Cluster in Read-Only mode
 
-This script will stop all traffci in a cluster and place it in a read-only mode
+**This script will stop all traffic in a cluster and place it in a read-only mode**
 
-Steps:
+## Installation
 
-1. Collect current running config:
-- Multi tenancy
-    - Copy all tenants and configs
-- NFS exports
-    - Save all export restrictions to file
-- SMB shares
-    - Save all Share permissions to file
-- FTP state
-- S3 buckets
+Copy all files to your local machine.
 
-2. Save state to file in JSON
-- Command line option for location
+Make `all_stop.py` executable
 
-3. Stop all services
-- Multi-tenancy disable NFS & SMB 
-- Disable S3 service (S3 will be completely offline)
-  - The ability to set bucket policies is not yet available, but is coming
-- Disable FTP
+## Configuration
 
-4. Convert all exports and shares to read only
+Edit the `all_stop.conf` file with your values.
 
-5. Re-enable protocols on all relevant tenants
-- Cluster is now NFS and SMB read-only
+## Operation
 
-6. Create method to put things back from saved file
+### To place cluster in Read-Only mode:
+- Run `all_stop.py --stop`
+
+### To return the cluster to its previous config:
+- Run `all_stop.py --resume`
+
+
+
 
 

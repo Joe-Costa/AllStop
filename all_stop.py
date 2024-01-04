@@ -5,21 +5,7 @@ import configparser
 import set_read_only
 import resume_cluster
 
-# Load the config file
-config = configparser.ConfigParser()
-config.read('all_stop.conf')
-CLUSTER_ADDRESS = config['CLUSTER']['CLUSTER_ADDRESS']
-TOKEN = config['CLUSTER']['TOKEN']
-CONFIG_SAVE_FILE_LOCATION = config['CLUSTER']['CONFIG_SAVE_FILE_LOCATION']
-
-# Disable "Insecure HTTP" errors if certs are not available
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-HEADERS = {
-    "Authorization": f"Bearer {TOKEN}",
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-}
+# This script is used to place a Qumulo cluster in read-only mode
 
 def main():
     parser = argparse.ArgumentParser(description="Set Qumulo Cluster in Read-Only mode and recover it with --stop and --resume options")

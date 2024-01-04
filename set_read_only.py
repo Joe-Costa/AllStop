@@ -54,9 +54,24 @@ def main():
         # Save working config to file "cluster_name_config_backup.json"
         config_json = [cluster_name, { "tenants":tenants['entries'] }, { "smb_shares": smb_shares['entries'] }, { "nfs_exports": nfs_exports['entries'] }, { "s3_config": s3_config }, { "ftp_config": ftp_config }]
         file_location = CONFIG_SAVE_FILE_LOCATION + cluster_name["cluster_name"] + "_config_backup.json"
-        with open(file_location, 'w') as json_file:
-            json.dump(config_json, json_file, indent=2)
-        
+
+        # Check to see if --stop has been already run - We do not want to do this back-to-back!
+        if not open(file_location):
+            print(f"Creating new config file at {file_location}")
+            with open(file_location, 'w') as json_file:
+                json.dump(config_json, json_file, indent=2)
+        else:
+            # Ask for confirmation before overwriting
+            user_response = input(f"\n*** WARNING !!!! ****\nThe file '{file_location}' already exists!\nOverwriting this file could lead to the loss of your clusters original configuration!\nAre you sure you want to run --stop again? (yes/no):\n").lower()
+
+            if user_response == 'yes':
+                with open(file_location, 'w') as json_file:
+                    json.dump(config_json, json_file, indent=2)
+                print(f"The file '{file_location}' has been overwritten.")
+            else:
+                print(f"Operation canceled. The file '{file_location}' has not been overwritten.")
+                exit()
+
         # Stop NFS and SMB on all tenants
         async with aiohttp.ClientSession() as session:
             stop_tasks = [stop_smb_nfs_per_tenant(key, session) for key in tenants['entries']]

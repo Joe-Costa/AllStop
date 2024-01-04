@@ -22,7 +22,7 @@ url = f"https://{CLUSTER_ADDRESS}/api/v1/cluster/settings"
 # Load the pre-stop configuration of the cluster
 cluster_name = requests.get(url, headers=HEADERS, verify=False).json()
 cluster_name = cluster_name['cluster_name']
-file_location = CONFIG_SAVE_FILE_LOCATION + cluster_name + ".json"
+file_location = CONFIG_SAVE_FILE_LOCATION + cluster_name + "_config_backup.json"
 
 def main():
 
@@ -39,10 +39,9 @@ def main():
     async def resume_service():
 
         # Restore Tenant Config
-        # ***** This is currently commented out for troubleshooing purposes *****
-        # async with aiohttp.ClientSession() as session:
-        #     start_tasks = [restore_tenant(key, session) for key in tenant_info]
-        #     await asyncio.gather(*start_tasks)
+        async with aiohttp.ClientSession() as session:
+            start_tasks = [restore_tenant(key, session) for key in tenant_info]
+            await asyncio.gather(*start_tasks)
 
         # Restore SMB Config
         async with aiohttp.ClientSession() as session:

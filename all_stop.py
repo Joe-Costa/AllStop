@@ -14,7 +14,7 @@ def main():
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--stop", action="store_true", help="Set Cluster to Read-Only")
-    group.add_argument("--resume", action="store_false", help="Restore Cluster from Read-Only mode")
+    group.add_argument("--resume", action="store_true", help="Restore Cluster from Read-Only mode")
 
     args = parser.parse_args()
 

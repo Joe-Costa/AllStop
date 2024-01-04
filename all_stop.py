@@ -2,8 +2,8 @@
 import argparse
 import urllib3
 import configparser
-import set_read_only as set_read_only
-import resume_cluster as resume_cluster
+import set_read_only
+import resume_cluster
 
 # Load the config file
 config = configparser.ConfigParser()
@@ -22,23 +22,22 @@ HEADERS = {
 }
 
 def main():
-    parser = argparse.ArgumentParser(description="Script with --stop and --resume options")
-    parser.add_argument("--stop", action="store_true", help="Run Stop class")
-    parser.add_argument("--resume", action="store_true", help="Run Resume class")
+    parser = argparse.ArgumentParser(description="Set Qumulo Cluster in Read-Only mode and recover it with --stop and --resume options")
+    parser.add_argument("--stop", action="store_true", help="Set Cluster to Read-Only")
+    parser.add_argument("--resume", action="store_true", help="Restore Cluster from Read-Only mode")
 
     args = parser.parse_args()
 
     if args.stop:  
-        set_read_only
-        asyncio.run(collect_and_stop())
-        # Add any additional logic related to the Stop class here
+        set_read_only.main()
 
     elif args.resume:
-        resume_cluster
-        # Add any additional logic related to the Resume class here
+        resume_cluster.main()
+
 
     else:
         print("No valid option provided. Use --stop or --resume.")
+        exit()
 
 if __name__ == "__main__":
     main()

@@ -8,6 +8,8 @@ Copy all files to your local machine.
 
 Make `all_stop.py` executable
 
+This script was built and tested with Python 3.11.6
+
 ## Configuration
 
 Edit the `all_stop.conf` file with your values.

@@ -12,7 +12,7 @@ Make `all_stop.py` executable
 
 Edit the `all_stop.conf` file with your values.
 
-This script required the valid Access Token of a user with the following RBAC roles:
+This script requires a valid Access Token for a user with the following RBAC privileges:
 
 - NFS_EXPORT_READ: View configuration of NFS exports
 - NFS_EXPORT_WRITE: Create, modify, and delete NFS exports

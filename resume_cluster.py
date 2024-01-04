@@ -29,7 +29,7 @@ def main():
     # Load the config subsections
     with open(file_location, 'r') as original_config:
         config_data = json.loads(original_config.read())
-        tenant_info = config_data[1]['tenant_info']
+        tenant_info = config_data[1]['tenants']
         smb_shares = config_data[2]['smb_shares']
         nfs_exports = config_data[3]['nfs_exports']
         s3_config = config_data[4]['s3_config']

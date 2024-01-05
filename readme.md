@@ -12,7 +12,7 @@ This script was built and tested with Python 3.11.6
 
 ## Configuration
 
-Edit the `all_stop.conf` file with your values.
+Edit the `all_stop.conf` file with your values. This file MUST be kept in the same directory as `all_stop.py`
 
 This script requires a valid Access Token for a user with the following RBAC privileges:
 

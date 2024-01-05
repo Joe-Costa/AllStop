@@ -3,13 +3,16 @@ import requests
 import asyncio
 import aiohttp
 import configparser
+import shutil
+from datetime import datetime
+import os
 
 # Load the config file
 config = configparser.ConfigParser()
-config.read('all_stop.conf')
-CLUSTER_ADDRESS = config['CLUSTER']['CLUSTER_ADDRESS']
-TOKEN = config['CLUSTER']['TOKEN']
-CONFIG_SAVE_FILE_LOCATION = config['CLUSTER']['CONFIG_SAVE_FILE_LOCATION']
+config.read("all_stop.conf")
+CLUSTER_ADDRESS = config["CLUSTER"]["CLUSTER_ADDRESS"]
+TOKEN = config["CLUSTER"]["TOKEN"]
+CONFIG_SAVE_FILE_LOCATION = config["CLUSTER"]["CONFIG_SAVE_FILE_LOCATION"]
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -21,23 +24,24 @@ url = f"https://{CLUSTER_ADDRESS}/api/v1/cluster/settings"
 
 # Load the pre-stop configuration of the cluster
 cluster_name = requests.get(url, headers=HEADERS, verify=False).json()
-cluster_name = cluster_name['cluster_name']
-file_location = CONFIG_SAVE_FILE_LOCATION + cluster_name + "_config_backup.json"
+cluster_name = cluster_name["cluster_name"]
+file_name = cluster_name + "_config_backup.json"
+file_location = CONFIG_SAVE_FILE_LOCATION + file_name
+
+
 
 def main():
-
     # Load the config subsections
-    with open(file_location, 'r') as original_config:
+    with open(file_location, "r") as original_config:
         config_data = json.loads(original_config.read())
-        tenant_info = config_data[1]['tenants']
-        smb_shares = config_data[2]['smb_shares']
-        nfs_exports = config_data[3]['nfs_exports']
-        s3_config = config_data[4]['s3_config']
-        ftp_config = config_data[5]['ftp_config']
+        tenant_info = config_data[1]["tenants"]
+        smb_shares = config_data[2]["smb_shares"]
+        nfs_exports = config_data[3]["nfs_exports"]
+        s3_config = config_data[4]["s3_config"]
+        ftp_config = config_data[5]["ftp_config"]
 
     # This function runs all the async restore methods
     async def resume_service():
-
         # Restore Tenant Config
         async with aiohttp.ClientSession() as session:
             start_tasks = [restore_tenant(key, session) for key in tenant_info]
@@ -57,16 +61,16 @@ def main():
         async with aiohttp.ClientSession() as session:
             await resume_s3_service(s3_config, session)
             await resume_ftp_service(ftp_config, session)
-        
+
         print(f"Services have been restored on cluster {cluster_name}")
 
     # Async General Purpose API patch function
     async def aiohttp_patch(url, api_json, session, method):
         async with session.patch(url, json=api_json, headers=HEADERS, ssl=False) as response:
             if response.status == 200:
-                print(f'{method} request successful')
+                print(f"{method} request successful")
             else:
-                print(f'{method} request error: {response.status}')
+                print(f"{method} request error: {response.status}")
                 print(await response.text())  # Print the error message or response content
 
     # Function to re-enable NFS and SMB services on a tenant
@@ -80,7 +84,7 @@ def main():
         method = f"Restoring config of NFS export on path {key.get('export_path')}:"
         url = f"https://{CLUSTER_ADDRESS}/api/v3/nfs/exports/{key.get('id')}"
         await aiohttp_patch(url, key, session, method)
-    
+
     # Async Function to restore SMB Shares
     async def restore_smb(key, session):
         method = f"Restoring config of SMB share {key.get('share_name')}:"
@@ -101,6 +105,15 @@ def main():
 
     asyncio.run(resume_service())
 
+    # Delete cluster running config file - We do not want this file around the next time --stop needs to run!
+    ran_configs_dir = CONFIG_SAVE_FILE_LOCATION + "ran_cofigs"
+    if os.path.exists(file_location):
+        if not os.path.exists(ran_configs_dir):
+            os.mkdir(ran_configs_dir)
+        new_file_name = f"{datetime.now()}-{file_name}"
+        shutil.move(file_location, f'{ran_configs_dir}/{new_file_name}')
+        print(f"Config file {file_location} has been moved to {ran_configs_dir}/{new_file_name}")
+
 
 if __name__ == "__main__":
-   main()
+    main()

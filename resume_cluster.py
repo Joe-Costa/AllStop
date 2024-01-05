@@ -110,7 +110,7 @@ def main():
     asyncio.run(resume_service())
 
     # Delete cluster running config file - We do not want this file around the next time --stop needs to run!
-    ran_configs_dir = CONFIG_SAVE_FILE_LOCATION + "ran_cofigs"
+    ran_configs_dir = CONFIG_SAVE_FILE_LOCATION + "previously_ran_cofigs"
     if os.path.exists(file_location):
         if not os.path.exists(ran_configs_dir):
             os.mkdir(ran_configs_dir)

@@ -4,15 +4,16 @@
 
 ## Installation
 
-Copy all files to your local machine.
+- Copy the self contained `all_stop` binary for your OS type to your local machine and make it executable if required.
+- (Alternate) Copy `all_stop.py` Python script to your local machine and make it executable if required.
 
-Make `all_stop.py` executable
+- Copy `all_stop.conf` and keep it in the same directory as the .py script or the binary
 
 This script was built and tested with Python 3.11.6
 
 ## Configuration
 
-Edit the `all_stop.conf` file with your values. This file MUST be kept in the same directory as `all_stop.py`
+Edit the `all_stop.conf` file with your values. This file MUST be kept in the same directory as `all_stop.py` or the `all_stop` binary
 
 This script requires a valid Access Token for a user with the following RBAC privileges:
 
@@ -26,6 +27,12 @@ This script requires a valid Access Token for a user with the following RBAC pri
 - S3_SETTINGS_WRITE: Modify S3 server settings
 - FTP_READ: View FTP status and settings
 - FTP_WRITE: Modify FTP status and settings
+
+### Helpful Qumulo Care Articles:
+
+[How to get an Access Token](https://care.qumulo.com/hc/en-us/articles/360004600994-Authenticating-with-Qumulo-s-REST-API#acquiring-a-bearer-token-by-using-the-web-ui-0-3) 
+
+[Qumulo Role Based Access Control](https://care.qumulo.com/hc/en-us/articles/360036591633-Role-Based-Access-Control-RBAC-with-Qumulo-Core#managing-roles-by-using-the-web-ui-0-7)
 
 ## Operation
 

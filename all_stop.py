@@ -2,11 +2,10 @@
 import argparse
 import urllib3
 import configparser
-import set_read_only
-import resume_cluster
+from set_read_only import main as set_read_only_main
+from resume_cluster import main as resume_cluster_main
 
 # This script is used to place a Qumulo cluster in read-only mode
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -19,10 +18,10 @@ def main():
     args = parser.parse_args()
 
     if args.stop:
-        set_read_only.main()
+        set_read_only_main()
 
     elif args.resume:
-        resume_cluster.main()
+        resume_cluster_main()
 
     else:
         print("No valid option provided. Use --stop or --resume.")

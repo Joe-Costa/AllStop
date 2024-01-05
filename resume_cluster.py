@@ -12,7 +12,7 @@ config = configparser.ConfigParser()
 config.read("all_stop.conf")
 CLUSTER_ADDRESS = config["CLUSTER"]["CLUSTER_ADDRESS"]
 TOKEN = config["CLUSTER"]["TOKEN"]
-CONFIG_SAVE_FILE_LOCATION = config["CLUSTER"]["CONFIG_SAVE_FILE_LOCATION"]
+CONFIG_SAVE_FILE_LOCATION = os.getcwd() + "/"
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -27,8 +27,6 @@ cluster_name = requests.get(url, headers=HEADERS, verify=False).json()
 cluster_name = cluster_name["cluster_name"]
 file_name = cluster_name + "_config_backup.json"
 file_location = CONFIG_SAVE_FILE_LOCATION + file_name
-
-
 
 def main():
     # Load the config subsections
@@ -109,14 +107,27 @@ def main():
 
     asyncio.run(resume_service())
 
-    # Delete cluster running config file - We do not want this file around the next time --stop needs to run!
+    # Rename and move cluster running config file - We do not want this file around the next time --stop needs to run!
     ran_configs_dir = CONFIG_SAVE_FILE_LOCATION + "previously_ran_cofigs"
     if os.path.exists(file_location):
+        # Checks to see if we have all the needed Write privileges
         if not os.path.exists(ran_configs_dir):
-            os.mkdir(ran_configs_dir)
-        new_file_name = f"{datetime.now()}-{file_name}"
-        shutil.move(file_location, f'{ran_configs_dir}/{new_file_name}')
-        print(f"Config file {file_location} has been moved to {ran_configs_dir}/{new_file_name}")
+            try:
+                os.mkdir(ran_configs_dir)
+            except:
+                print(f"\nERROR: Cannot create previously run config file directory at location {ran_configs_dir}")
+                print(f"This script attempts to move the last run config file to this new location")
+                print(f"Is the parent directory {CONFIG_SAVE_FILE_LOCATION} writeable? Please delete or move the file {file_location} before running --stop again")
+                print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")                           
+        try:
+            new_file_name = f"{datetime.now()}-{file_name}"
+            shutil.move(file_location, f'{ran_configs_dir}/{new_file_name}')
+            print(f"\nConfig file {file_location} has been moved to {ran_configs_dir}/{new_file_name}.\nJob is complete.")
+        except:
+            print(f"\nERROR: Cannot move previously run config file to directory {ran_configs_dir} is this directory writeable?")
+            print(f"This script attempts to move the last run config file to this new location")
+            print(f"Please delete or move the file {file_location} before running --stop again")
+            print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")    
 
 
 if __name__ == "__main__":

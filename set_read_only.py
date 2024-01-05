@@ -13,7 +13,8 @@ config = configparser.ConfigParser()
 config.read("all_stop.conf")
 CLUSTER_ADDRESS = config["CLUSTER"]["CLUSTER_ADDRESS"]
 TOKEN = config["CLUSTER"]["TOKEN"]
-CONFIG_SAVE_FILE_LOCATION = config["CLUSTER"]["CONFIG_SAVE_FILE_LOCATION"]
+CONFIG_SAVE_FILE_LOCATION = os.getcwd() + "/"
+
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -68,9 +69,14 @@ def main():
 
         # Check to see if --stop has been already run - We do not want to do this back-to-back!
         if not os.path.exists(file_location):
-            print(f"Creating new config file at {file_location}")
-            with open(file_location, "w") as json_file:
-                json.dump(config_json, json_file, indent=2)
+            try:
+                print(f"Creating new config file at {file_location}")
+                with open(file_location, "w") as json_file:
+                    json.dump(config_json, json_file, indent=2)
+            except:
+                print(f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}")
+                print("Please make this directory writeable or relocate the all_stop executable to a writeable location")
+                exit()
         else:
             # Ask for confirmation before overwriting
             user_response = input(
@@ -78,11 +84,17 @@ def main():
             ).lower()
 
             if user_response == "yes":
-                with open(file_location, "w") as json_file:
-                    json.dump(config_json, json_file, indent=2)
-                print(f"The file '{file_location}' has been overwritten.")
+                # Can we write the running config file?
+                try:
+                    with open(file_location, "w") as json_file:
+                        json.dump(config_json, json_file, indent=2)
+                    print(f"The file '{file_location}' has been overwritten.")
+                except:
+                    print(f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}")
+                    print("Please make this directory writeable or relocate the all_stop executable to a writeable location")
+                    exit()
             else:
-                print(f"Operation canceled. The file '{file_location}' has not been overwritten.")
+                print(f"Operation canceled. The file '{file_location}' has not been overwritten. Exiting...")
                 exit()
 
         # Stop NFS and SMB on all tenants

@@ -146,15 +146,6 @@ def set_read_only():
                 print(f"{method} request error: {response.status}")
                 print(await response.text())  # Print the error message or response content
 
-    # Async General Purpose API POST function
-    async def aiohttp_post(url, api_json, session, method):
-        async with session.post(url, json=api_json, headers=HEADERS, ssl=USE_SSL) as response:
-            if response.status == 200:
-                print(f"{method} request successful")
-            else:
-                print(f"{method} request error: {response.status}")
-                print(await response.text())  # Print the error message or response content
-
     # Function to disable NFS and SMB service on a tenant
     async def stop_smb_nfs_per_tenant(key, session):
         method = f"Disabling tenant {key.get('name')}:"

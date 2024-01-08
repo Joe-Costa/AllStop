@@ -220,7 +220,6 @@ def resume_cluster(file_name):
     cluster_name = requests.get(url, headers=HEADERS, verify=USE_SSL).json()
     cluster_name = cluster_name["cluster_name"]
     if file_name:
-        # file_name = restore_file
         file_location = os.path.abspath(file_name)
         ran_from_file = True
     else:

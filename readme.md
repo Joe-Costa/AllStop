@@ -7,7 +7,7 @@
 - Copy the self contained `all_stop` binary for your OS type to your local machine and make it executable if required.
 - Copy `all_stop.conf` and keep it in the same directory as the the binary executable
 
-#### Alternate mode from source:
+#### (Optional) Alternate mode from source:
 - Copy `all_stop.py` Python script to your local machine and make it executable if required.
 
 - Copy `all_stop.conf` and keep it in the same directory as the .py script

@@ -1,13 +1,17 @@
 # All-Stop script - Place a Qumulo Cluster in Read-Only mode
 
-**This script will stop all traffic in a cluster and place it in a read-only mode**
+**This script will stop all front-end traffic in a cluster and place all client accessible protocols in a read-only mode**
 
 ## Installation
 
 - Copy the self contained `all_stop` binary for your OS type to your local machine and make it executable if required.
-- (Alternate) Copy `all_stop.py` Python script to your local machine and make it executable if required.
+- Copy `all_stop.conf` and keep it in the same directory as the the binary executable
 
-- Copy `all_stop.conf` and keep it in the same directory as the .py script or the binary
+#### Alternate mode from source:
+- Copy `all_stop.py` Python script to your local machine and make it executable if required.
+
+- Copy `all_stop.conf` and keep it in the same directory as the .py script
+- Install the `requirements.txt` file
 
 This script was built and tested with Python 3.11.6
 

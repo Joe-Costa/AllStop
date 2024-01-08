@@ -10,7 +10,7 @@ import requests
 from datetime import datetime
 import os
 
-# This script is used to place a Qumulo cluster in read-only mode
+# This script is used to place all client-facing protocols in Qumulo cluster in read-only mode
 
 # Load the config file
 config = configparser.ConfigParser()
@@ -61,6 +61,7 @@ def set_read_only():
             # Get FTP Config:
             url = f"https://{CLUSTER_ADDRESS}/api/v0/ftp/settings"
             ftp_config = await aiohttp_get(url, session)
+
 
         # Save working config to file "cluster_name_config_backup.json"
         config_json = [
@@ -125,6 +126,7 @@ def set_read_only():
             stop_tasks = [set_smb_to_read_only(key, session) for key in smb_shares["entries"]]
             await asyncio.gather(*stop_tasks)
 
+
         print("** Returning SMB and NFS services to tenants **")
 
         # Return NFS and SMB service to any tenants who had it enabled previously
@@ -135,9 +137,18 @@ def set_read_only():
         # Tasks complete message.  Cluster should be now in Read-Only mode
         print(f"Cluster {cluster_name.get('cluster_name')} has been placed in Read-Only mode")
 
-    # Async General Purpose API patch function
+    # Async General Purpose API PATCH function
     async def aiohttp_patch(url, api_json, session, method):
         async with session.patch(url, json=api_json, headers=HEADERS, ssl=USE_SSL) as response:
+            if response.status == 200:
+                print(f"{method} request successful")
+            else:
+                print(f"{method} request error: {response.status}")
+                print(await response.text())  # Print the error message or response content
+
+    # Async General Purpose API POST function
+    async def aiohttp_post(url, api_json, session, method):
+        async with session.post(url, json=api_json, headers=HEADERS, ssl=USE_SSL) as response:
             if response.status == 200:
                 print(f"{method} request successful")
             else:
@@ -187,6 +198,7 @@ def set_read_only():
         url = f"https://{CLUSTER_ADDRESS}/api/v0/ftp/settings"
         await aiohttp_patch(url, restrict_json, session, method)
 
+
     # Function to re-enable tenant's SMB and NFS service
     async def start_smb_nfs_per_tenant(key, session):
         data = key
@@ -210,14 +222,20 @@ def set_read_only():
     asyncio.run(collect_and_stop())
 
 # Function to revert the changes applies to the cluster's config by set_read_only()
-def resume_cluster():
+def resume_cluster(file_name):
 
     # Load the pre-stop configuration of the cluster
     url = f"https://{CLUSTER_ADDRESS}/api/v1/cluster/settings"
     cluster_name = requests.get(url, headers=HEADERS, verify=USE_SSL).json()
     cluster_name = cluster_name["cluster_name"]
-    file_name = cluster_name + "_config_backup.json"
-    file_location = CONFIG_SAVE_FILE_LOCATION + file_name
+    if file_name:
+        # file_name = restore_file
+        file_location = os.path.abspath(file_name)
+        ran_from_file = True
+    else:
+        file_name = cluster_name + "_config_backup.json"
+        file_location = CONFIG_SAVE_FILE_LOCATION + file_name
+        ran_from_file = False
 
     # Load the config subsections
     if os.path.exists(file_location):
@@ -297,28 +315,30 @@ def resume_cluster():
 
     asyncio.run(resume_service())
 
-    # Rename and move cluster running config file - We do not want this file around the next time --stop needs to run!
-    ran_configs_dir = os.path.join(CONFIG_SAVE_FILE_LOCATION + "previously_ran_cofigs", '')
-    if os.path.exists(file_location):
-        # Checks to see if we have all the needed Write privileges
-        if not os.path.exists(ran_configs_dir):
+    # Only move Running Config file if not running with --file option
+    if not ran_from_file:
+        # Rename and move cluster running config file - We do not want this file around the next time --stop needs to run!
+        ran_configs_dir = os.path.join(CONFIG_SAVE_FILE_LOCATION + "previously_ran_cofigs", '')
+        if os.path.exists(file_location):
+            # Checks to see if we have all the needed Write privileges
+            if not os.path.exists(ran_configs_dir):
+                try:
+                    os.mkdir(ran_configs_dir)
+                except:
+                    print(f"\nERROR: Cannot create previously run config file directory at location {ran_configs_dir}")
+                    print(f"This script attempts to move the last run config file to this new location")
+                    print(f"Is the parent directory {CONFIG_SAVE_FILE_LOCATION} writeable? Please delete or move the file {file_location} before running --stop again")
+                    print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")                           
             try:
-                os.mkdir(ran_configs_dir)
-            except:
-                print(f"\nERROR: Cannot create previously run config file directory at location {ran_configs_dir}")
+                new_file_name = f"{str(datetime.now()).replace(':','.')}-{file_name}"
+                shutil.move(file_location, f"{os.path.join(ran_configs_dir, new_file_name)}")
+                print(f"\nConfig file {file_location} has been moved to {ran_configs_dir}/{new_file_name}.\nJob is complete.")
+            except Exception as error:
+                print(f"\nERROR: {error}")
+                print(f"Cannot move previously run config file to directory {ran_configs_dir} is this directory writeable?")
                 print(f"This script attempts to move the last run config file to this new location")
-                print(f"Is the parent directory {CONFIG_SAVE_FILE_LOCATION} writeable? Please delete or move the file {file_location} before running --stop again")
-                print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")                           
-        try:
-            new_file_name = f"{str(datetime.now()).replace(':','.')}-{file_name}"
-            shutil.move(file_location, f"{os.path.join(ran_configs_dir, new_file_name)}")
-            print(f"\nConfig file {file_location} has been moved to {ran_configs_dir}/{new_file_name}.\nJob is complete.")
-        except Exception as error:
-            print(f"\nERROR: {error}")
-            print(f"Cannot move previously run config file to directory {ran_configs_dir} is this directory writeable?")
-            print(f"This script attempts to move the last run config file to this new location")
-            print(f"Please delete or move the file {file_location} before running --stop again")
-            print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")    
+                print(f"Please delete or move the file {file_location} before running --stop again")
+                print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")    
 
 def main():
     parser = argparse.ArgumentParser(
@@ -327,14 +347,18 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--stop", action="store_true", help="Set Cluster to Read-Only")
     group.add_argument("--resume", action="store_true", help="Restore Cluster from Read-Only mode")
+    parser.add_argument('--file', help='Specify restore running config file', metavar='FILE')
 
     args = parser.parse_args()
 
     if args.stop:
-        set_read_only()
+        if args.stop and args.file:
+            parser.error("--file option is not valid with --stop.")
+        else:
+            set_read_only()
 
     elif args.resume:
-        resume_cluster()
+        resume_cluster(args.file)
 
     else:
         print("No valid option provided. Use --stop or --resume.")

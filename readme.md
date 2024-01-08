@@ -47,8 +47,14 @@ To create a Role called `set_read_only` on your cluster via the Qumulo `qq` CLI 
 ### To place cluster in Read-Only mode:
 - Run `all_stop --stop`
 
+This step creates a backup of the previous running config of the cluster in the curent directory
+
 ### To return the cluster to its previous config:
 - Run `all_stop --resume`
+
+This step looks for the previous running config file and re-applies it, restoring all previous services to the cluster. 
+
+Once the restore job is complete the running config file will be renamed and moved to a new directory called `previously_ran_configs`
 
 ### To restore the cluster from a specific running config file:
 

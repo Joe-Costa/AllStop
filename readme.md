@@ -52,7 +52,7 @@ To create a Role called `set_read_only` on your cluster via the Qumulo `qq` CLI 
 
 ### To restore the cluster from a specific running config file:
 
-- Run `all_stop --resume -file /path/top/file`
+- Run `all_stop --resume -file /path/to/file`
 
 
 

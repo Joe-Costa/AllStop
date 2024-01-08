@@ -28,6 +28,10 @@ This script requires a valid Access Token for a user with the following RBAC pri
 - FTP_READ: View FTP status and settings
 - FTP_WRITE: Modify FTP status and settings
 
+
+To create a Role called "set_read_only" via the Qumulo `qq` CLI copy the file called `read_only_privileges` from this repo to your `qq` CLI enabled machine and apply it with `qq auth_create_role -r set_read_only -p read_only_privileges`
+
+
 ### Helpful Qumulo Care Articles:
 
 [How to get an Access Token](https://care.qumulo.com/hc/en-us/articles/360004600994-Authenticating-with-Qumulo-s-REST-API#acquiring-a-bearer-token-by-using-the-web-ui-0-3) 

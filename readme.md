@@ -33,7 +33,7 @@ This script requires a valid Access Token for a user with the following RBAC pri
 - FTP_WRITE: Modify FTP status and settings
 
 
-To create a Role called "set_read_only" via the Qumulo `qq` CLI copy the file called `read_only_privileges` from this repo to your `qq` CLI enabled machine and apply it with `qq auth_create_role -r set_read_only -p read_only_privileges`
+To create a Role called `set_read_only` on your cluster via the Qumulo `qq` CLI copy the file called `read_only_privileges` from this repo to your `qq` CLI enabled machine and apply it with `qq auth_create_role -r set_read_only -p read_only_privileges`
 
 
 ### Helpful Qumulo Care Articles:
@@ -45,10 +45,14 @@ To create a Role called "set_read_only" via the Qumulo `qq` CLI copy the file ca
 ## Operation
 
 ### To place cluster in Read-Only mode:
-- Run `all_stop.py --stop`
+- Run `all_stop --stop`
 
 ### To return the cluster to its previous config:
-- Run `all_stop.py --resume`
+- Run `all_stop --resume`
+
+### To restore the cluster from a specific running config file:
+
+- Run `all_stop --resume -file /path/top/file`
 
 
 

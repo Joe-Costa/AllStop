@@ -49,6 +49,12 @@ To create a Role called `set_read_only` on your cluster via the Qumulo `qq` CLI 
 
 This step creates a backup of the previous running config of the cluster in the curent directory
 
+After application of `--stop` this will be the state of the cluster:
+
+- All SMB shares will be set to Read-Only for all users and hosts.
+- All NFS exports will be set to Read-Only for all users and hosts.
+- The S3 and FTP services will be disabled.
+
 ### To return the cluster to its previous config:
 - Run `all_stop --resume`
 

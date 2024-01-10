@@ -1,6 +1,6 @@
-# All-Stop script - Place a Qumulo Cluster in Read-Only mode
+# All-Stop - Place a Qumulo Cluster in Read-Only mode
 
-**This script will stop all front-end traffic in a cluster and place all client accessible protocols in a read-only mode**
+**This tool will stop all front-end traffic in a cluster and place all client accessible protocols in a read-only or disabled mode**
 
 ## Installation
 

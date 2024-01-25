@@ -9,6 +9,7 @@ import shutil
 import requests
 from datetime import datetime
 import os
+import textwrap
 
 # This script is used to place all client-facing protocols in Qumulo cluster in read-only mode
 
@@ -83,16 +84,27 @@ def set_read_only():
                     json.dump(config_json, json_file, indent=2)
             except:
                 print(
-                    f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}"
-                )
-                print(
-                    "Please make this directory writeable or relocate the all_stop executable to a writeable location"
+                    textwrap.dedent(
+                        f"""
+                    ERROR! Operation Failed: Cannot write cluster config file to directory:
+                    {CONFIG_SAVE_FILE_LOCATION}
+                    Please make this directory writeable or relocate the all_stop executable to a
+                    writeable location.
+                """.strip()
+                    )
                 )
                 exit()
         else:
             # Ask for confirmation before overwriting
             user_response = input(
-                f"\n*** WARNING !!!! ****\nThe file '{file_location}' already exists!\nOverwriting this file could lead to the loss of your clusters original configuration!\nAre you sure you want to run --stop again? (yes/no):\n"
+                textwrap.dedent(
+                    f"""
+                *** WARNING !!!! ****
+                The file '{file_location}' already exists!
+                Overwriting this file could lead to the loss of your clusters original configuration!
+                Are you sure you want to run --stop again? (yes/no):
+                """
+                ).strip()
             ).lower()
 
             if user_response == "yes":
@@ -103,15 +115,19 @@ def set_read_only():
                     print(f"The file '{file_location}' has been overwritten.")
                 except:
                     print(
-                        f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}"
-                    )
-                    print(
-                        "Please make this directory writeable or relocate the all_stop executable to a writeable location"
+                        textwrap.dedent(
+                            f"""
+                        ERROR! Operation Failed: Cannot write cluster config file to directory:
+                        {CONFIG_SAVE_FILE_LOCATION}
+                        Please make this directory writeable or relocate the all_stop executable to a
+                        writeable location
+                    """.strip()
+                        )
                     )
                     exit()
             else:
                 print(
-                    f"Operation canceled. The file '{file_location}' has not been overwritten. Exiting..."
+                    f"Operation canceled. The file '{file_location}' has not been overwritten. Exiting."
                 )
                 exit()
 
@@ -326,16 +342,15 @@ def resume_cluster(file_name):
                     os.mkdir(ran_configs_dir)
                 except:
                     print(
-                        f"\nERROR: Cannot create previously run config file directory at location {ran_configs_dir}"
-                    )
-                    print(
-                        f"This script attempts to move the last run config file to this new location"
-                    )
-                    print(
-                        f"Is the parent directory {CONFIG_SAVE_FILE_LOCATION} writeable? Please delete or move the file {file_location} before running --stop again"
-                    )
-                    print(
-                        f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***"
+                        textwrap.dedent(
+                            f"""
+                        ERROR: Cannot create previously run config file directory at location: {ran_configs_dir}"
+                        The script attempts to move the last run config file to the new location.
+                        the parent directory writeable? Dir: {CONFIG_SAVE_FILE_LOCATION}
+                        Please delete or move the file {file_location} before running --stop again.
+                        *** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***
+                        """
+                        ).strip()
                     )
             try:
                 new_file_name = f"{str(datetime.now()).replace(':','.')}-{file_name}"
@@ -344,14 +359,16 @@ def resume_cluster(file_name):
                     f"\nConfig file {file_location} has been moved to {ran_configs_dir}/{new_file_name}.\nJob is complete."
                 )
             except Exception as error:
-                print(f"\nERROR: {error}")
                 print(
-                    f"Cannot move previously run config file to directory {ran_configs_dir} is this directory writeable?"
-                )
-                print(f"This script attempts to move the last run config file to this new location")
-                print(f"Please delete or move the file {file_location} before running --stop again")
-                print(
-                    f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***"
+                    textwrap.dedent(
+                        f"""
+                    ERROR: {error}
+                    Cannot move previously run config file to directory {ran_configs_dir} is this directory writeable?
+                    This script attempts to move the last run config file to this new location
+                    Please delete or move the file {file_location} before running --stop again
+                    f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***
+                    """.strip()
+                    )
                 )
 
 

@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 import argparse
-import urllib3
-import configparser
 import asyncio
-import aiohttp
+import configparser
 import json
-import shutil
-import requests
-from datetime import datetime
 import os
+import shutil
 import textwrap
+from datetime import datetime
+
+
+import aiohttp
+import urllib3
+import requests
 
 # This script is used to place all client-facing protocols in Qumulo cluster in read-only mode
 

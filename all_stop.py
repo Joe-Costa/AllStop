@@ -5,6 +5,7 @@ import configparser
 import json
 import os
 import shutil
+import sys
 import textwrap
 from datetime import datetime
 
@@ -95,7 +96,7 @@ def set_read_only():
                 """.strip()
                     )
                 )
-                exit()
+                sys.exit()
         else:
             # Ask for confirmation before overwriting
             user_response = input(
@@ -126,12 +127,12 @@ def set_read_only():
                     """.strip()
                         )
                     )
-                    exit()
+                    sys.exit()
             else:
                 print(
                     f"Operation canceled. The file '{file_location}' has not been overwritten. Exiting."
                 )
-                exit()
+                sys.exit()
 
         # Stop NFS and SMB on all tenants
         async with aiohttp.ClientSession() as session:
@@ -266,7 +267,7 @@ def resume_cluster(file_name):
         print(
             f"Cluster config file {file_location} not found!\nOperation failed, unable to restore cluster"
         )
-        exit()
+        sys.exit()
 
     # This function runs all the async restore methods
     async def resume_service():
@@ -396,7 +397,7 @@ def main():
 
     else:
         print("No valid option provided. Use --stop or --resume.")
-        exit()
+        sys.exit()
 
 
 if __name__ == "__main__":

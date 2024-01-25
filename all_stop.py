@@ -17,8 +17,8 @@ config = configparser.ConfigParser()
 config.read("all_stop.conf")
 CLUSTER_ADDRESS = config["CLUSTER"]["CLUSTER_ADDRESS"]
 TOKEN = config["CLUSTER"]["TOKEN"]
-CONFIG_SAVE_FILE_LOCATION = os.path.join(os.getcwd(), '')
-USE_SSL = config["CLUSTER"].getboolean('USE_SSL')
+CONFIG_SAVE_FILE_LOCATION = os.path.join(os.getcwd(), "")
+USE_SSL = config["CLUSTER"].getboolean("USE_SSL")
 
 # Disable "Insecure HTTP" errors if certs are not available
 if not USE_SSL:
@@ -62,7 +62,6 @@ def set_read_only():
             url = f"https://{CLUSTER_ADDRESS}/api/v0/ftp/settings"
             ftp_config = await aiohttp_get(url, session)
 
-
         # Save working config to file "cluster_name_config_backup.json"
         config_json = [
             cluster_name,
@@ -83,8 +82,12 @@ def set_read_only():
                 with open(file_location, "w") as json_file:
                     json.dump(config_json, json_file, indent=2)
             except:
-                print(f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}")
-                print("Please make this directory writeable or relocate the all_stop executable to a writeable location")
+                print(
+                    f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}"
+                )
+                print(
+                    "Please make this directory writeable or relocate the all_stop executable to a writeable location"
+                )
                 exit()
         else:
             # Ask for confirmation before overwriting
@@ -99,11 +102,17 @@ def set_read_only():
                         json.dump(config_json, json_file, indent=2)
                     print(f"The file '{file_location}' has been overwritten.")
                 except:
-                    print(f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}")
-                    print("Please make this directory writeable or relocate the all_stop executable to a writeable location")
+                    print(
+                        f"\nERROR! Operation Failed: Cannot write cluster config file to directory {CONFIG_SAVE_FILE_LOCATION}"
+                    )
+                    print(
+                        "Please make this directory writeable or relocate the all_stop executable to a writeable location"
+                    )
                     exit()
             else:
-                print(f"Operation canceled. The file '{file_location}' has not been overwritten. Exiting...")
+                print(
+                    f"Operation canceled. The file '{file_location}' has not been overwritten. Exiting..."
+                )
                 exit()
 
         # Stop NFS and SMB on all tenants
@@ -125,7 +134,6 @@ def set_read_only():
         async with aiohttp.ClientSession() as session:
             stop_tasks = [set_smb_to_read_only(key, session) for key in smb_shares["entries"]]
             await asyncio.gather(*stop_tasks)
-
 
         print("** Returning SMB and NFS services to tenants **")
 
@@ -189,7 +197,6 @@ def set_read_only():
         url = f"https://{CLUSTER_ADDRESS}/api/v0/ftp/settings"
         await aiohttp_patch(url, restrict_json, session, method)
 
-
     # Function to re-enable tenant's SMB and NFS service
     async def start_smb_nfs_per_tenant(key, session):
         data = key
@@ -211,6 +218,7 @@ def set_read_only():
             )
 
     asyncio.run(collect_and_stop())
+
 
 # Function to revert the changes applies to the cluster's config by set_read_only()
 def resume_cluster(file_name):
@@ -237,7 +245,9 @@ def resume_cluster(file_name):
             s3_config = config_data[4]["s3_config"]
             ftp_config = config_data[5]["ftp_config"]
     else:
-        print(f"Cluster config file {file_location} not found!\nOperation failed, unable to restore cluster")
+        print(
+            f"Cluster config file {file_location} not found!\nOperation failed, unable to restore cluster"
+        )
         exit()
 
     # This function runs all the async restore methods
@@ -308,27 +318,42 @@ def resume_cluster(file_name):
     # Only move Running Config file if not running with --file option
     if not ran_from_file:
         # Rename and move cluster running config file - We do not want this file around the next time --stop needs to run!
-        ran_configs_dir = os.path.join(CONFIG_SAVE_FILE_LOCATION + "previously_ran_cofigs", '')
+        ran_configs_dir = os.path.join(CONFIG_SAVE_FILE_LOCATION + "previously_ran_cofigs", "")
         if os.path.exists(file_location):
             # Checks to see if we have all the needed Write privileges
             if not os.path.exists(ran_configs_dir):
                 try:
                     os.mkdir(ran_configs_dir)
                 except:
-                    print(f"\nERROR: Cannot create previously run config file directory at location {ran_configs_dir}")
-                    print(f"This script attempts to move the last run config file to this new location")
-                    print(f"Is the parent directory {CONFIG_SAVE_FILE_LOCATION} writeable? Please delete or move the file {file_location} before running --stop again")
-                    print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")                           
+                    print(
+                        f"\nERROR: Cannot create previously run config file directory at location {ran_configs_dir}"
+                    )
+                    print(
+                        f"This script attempts to move the last run config file to this new location"
+                    )
+                    print(
+                        f"Is the parent directory {CONFIG_SAVE_FILE_LOCATION} writeable? Please delete or move the file {file_location} before running --stop again"
+                    )
+                    print(
+                        f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***"
+                    )
             try:
                 new_file_name = f"{str(datetime.now()).replace(':','.')}-{file_name}"
                 shutil.move(file_location, f"{os.path.join(ran_configs_dir, new_file_name)}")
-                print(f"\nConfig file {file_location} has been moved to {ran_configs_dir}/{new_file_name}.\nJob is complete.")
+                print(
+                    f"\nConfig file {file_location} has been moved to {ran_configs_dir}/{new_file_name}.\nJob is complete."
+                )
             except Exception as error:
                 print(f"\nERROR: {error}")
-                print(f"Cannot move previously run config file to directory {ran_configs_dir} is this directory writeable?")
+                print(
+                    f"Cannot move previously run config file to directory {ran_configs_dir} is this directory writeable?"
+                )
                 print(f"This script attempts to move the last run config file to this new location")
                 print(f"Please delete or move the file {file_location} before running --stop again")
-                print(f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***")    
+                print(
+                    f"*** Failure to do so will lead to your cluster requiring manual recovery from the Read-Only state! ***"
+                )
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -337,7 +362,7 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--stop", action="store_true", help="Set Cluster to Read-Only")
     group.add_argument("--resume", action="store_true", help="Restore Cluster from Read-Only mode")
-    parser.add_argument('--file', help='Specify restore running config file', metavar='FILE')
+    parser.add_argument("--file", help="Specify restore running config file", metavar="FILE")
 
     args = parser.parse_args()
 
@@ -353,6 +378,7 @@ def main():
     else:
         print("No valid option provided. Use --stop or --resume.")
         exit()
+
 
 if __name__ == "__main__":
     main()

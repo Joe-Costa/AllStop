@@ -47,6 +47,7 @@ To create a Role called `set_read_only` on your cluster via the Qumulo `qq` CLI 
 ### To place cluster in Read-Only mode:
 - Run `all_stop --stop`
 
+
 This step creates a backup of the previous running config of the cluster in the curent directory
 
 After application of `--stop` this will be the state of the cluster:

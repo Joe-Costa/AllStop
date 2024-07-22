@@ -38,9 +38,9 @@ To create a Role called `set_read_only` on your cluster via the Qumulo `qq` CLI 
 
 ### Helpful Qumulo Care Articles:
 
-[How to get an Access Token - ](https://docs.qumulo.com/azure-administrator-guide/connecting-to-external-services/creating-using-access-tokens-to-authenticate-external-services-qumulo-core.html)
+[How to get an Access Token](https://docs.qumulo.com/azure-administrator-guide/connecting-to-external-services/creating-using-access-tokens-to-authenticate-external-services-qumulo-core.html)
 
-[Qumulo Role Based Access Control - ](https://care.qumulo.com/hc/en-us/articles/360036591633-Role-Based-Access-Control-RBAC-with-Qumulo-Core#managing-roles-by-using-the-web-ui-0-7)
+[Qumulo Role Based Access Control](https://care.qumulo.com/hc/en-us/articles/360036591633-Role-Based-Access-Control-RBAC-with-Qumulo-Core#managing-roles-by-using-the-web-ui-0-7)
 
 ## Operation
 
